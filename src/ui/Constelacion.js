@@ -16,9 +16,13 @@ import piecemap from './Piecemap'
 const socket  = require('../connection/socket').socket
 
 class Constelacion extends React.Component {
-    state = {
-        sesionState: new Sesion(),
-        draggedPieceTargetId: ""
+    constructor(props) {
+    super(props);
+        this.state = {
+            sesionState: new Sesion(),
+            cantFiguras: 0,
+            draggedPieceTargetId: ""
+        }
     }
 
     componentDidMount() {
@@ -28,11 +32,10 @@ class Constelacion extends React.Component {
           this.moverFigura(move.selectedId, move.finalPosition, this.state.sesionState, false)
         })
 
-    // socket.on('agrega_ajeno', agrega => {
-    //     console.log("movimiento ajeno: " + agrega.selectedId + ", " + agrega.finalPosition);
-    //     this.agregarFigura(agrega.selectedId, agrega.finalPosition, this.state.sesionState, false)
-    //     })
-    
+     socket.on('agrega_figura_ajeno', agrega => {
+         console.log("agrega figura ajeno: ",  agrega.cantFiguras);
+         this.agregarFigura(agrega.cantFiguras, this.state.sesionState,  false)
+         })
     
    }
 
@@ -50,7 +53,7 @@ class Constelacion extends React.Component {
       console.log("Constelacion moverfigura actualSesion:", actualSesion)
       console.log("Constelacion moverfigura isMyMove:", isMyMove)
 
-      actualSesion.moverFigura(selectedId, finalPosition, isMyMove)
+        actualSesion.moverFigura(selectedId, finalPosition, isMyMove)
 
         // notificamos a los otros que hicimos un movimiento
         if (isMyMove) {
@@ -72,17 +75,32 @@ class Constelacion extends React.Component {
         })
     }
 
-    agregarFigura = () => {
-        const actualSesion = this.state.sesionState;
-        // const actualTablero = actualsesion.getTablero()
-        actualSesion.agregarFigura()
+    agregarFigura = (cantFiguras, actualSesion, isMyMove) => {
+        
+        console.log('Cantidad Figuras antes:', cantFiguras);
+        
+        actualSesion.agregarFigura(cantFiguras)
 
-        // establecemos el state.
+        // notificamos a los otros que agregamos una figura
+        if (isMyMove) {
+            console.log("Constelacion isMyMove", isMyMove);
+            socket.emit('agrega figura', {
+                cantFiguras: cantFiguras,
+                // finalPosition: finalPosition,
+                sesionId: this.props.sesionId
+            })
+        }
+
+
+    // this.props.playAudio()
+
+    // establecemos el state.
+
         this.setState({
-            draggedPieceTargetId: "",
-            sesionState: actualSesion
+            sesionState: actualSesion,
+            cantFiguras: cantFiguras + 1,
         })
-
+        console.log('Cantidad Figuras despues:', this.state.cantFiguras);
     }
 
     endDragging = (e) => {
@@ -126,7 +144,7 @@ class Constelacion extends React.Component {
                     <div className = "bg-gray-400 w-full mx-auto text-center" >OPCIONES</div>
                         <button
                         className="flex rounded-full items-center py-2 px-3 bg-gradient focus:outline-none shadow-lg"
-                        onClick={() => this.agregarFigura()}>
+                        onClick={() => this.agregarFigura(this.state.cantFiguras, this.state.sesionState, true)}>
                         <div className="px-3">
                         <p className="text-white">
                             Agregar Figura
@@ -184,9 +202,18 @@ const ConstelacionWrapper = () => {
 //    const [sessionDoesNotExist, doesntExist] = React.useState(false)
 
     React.useEffect(() => {
+
+        /* SOCKET: INGRESO NUEVO USUARIO  */
         socket.on("userJoinedRoom", statusUpdate => {
           console.log("socket.id: ", socket.id);
           console.log("Ha ingresado un nuevo participante! Nombre: " + statusUpdate.userName + ", Sesion Id: " + statusUpdate.sesionId + " Socket id: " + statusUpdate.mySocketId)
+            // VERIFICAR QUE EL USUARIO NUEVO NO EXISTE EN LA LISTA DE USUARIOS DE USUARIOS 
+            // SI NO EXISTE EN LA LISTA AGREGARLO A LA LISTA DE USUARIOS Y ACTUALIZR PANTALLA
+            // ACTIVAR NOTIFICACION TOAST DE USUARIO NUEVO
+            // ACTIVAR CAJA DE VIDEO
+            // ENVIAR SOLICITUD DE PEER
+            //  
+
             // if (socket.id !== statusUpdate.mySocketId) {
             //     setNewUserSocketId(statusUpdate.mySocketId)
             // }
@@ -254,12 +281,17 @@ const ConstelacionWrapper = () => {
                 playAudio={play}
                 sesionId={sesionId}
               />
-              {/*<VideoChatApp
-                mySocketId={socket.id}
-                newUserSocketId={newUserSocketId}
-                userName={props.userName}
-                opponentUserName={opponentUserName}
-              />*/}
+                <div className = "flex flex-col p-2 mt-2 w-full h-720">
+                    <div className = "h-1/2 border-2 border-gray-400">VIDEOCHAT
+                    {/*<VideoChatApp
+                        mySocketId={socket.id}
+                        newUserSocketId={newUserSocketId}
+                        userName={props.userName}
+                        opponentUserName={opponentUserName}
+                    />*/}
+                    </div>
+                    <div className = "h-1/2 border-2 border-gray-400">CHAT</div>
+                </div>
             </div>
           </div>
         </div>
