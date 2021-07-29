@@ -117,20 +117,20 @@ function VideoChatApp(props) {
   } else if (receivingCall) {
     mainView = (
       <div>
-        <h1>{props.opponentUserName} está llamando</h1>
+        <h1>{props.newUserName} está llamando</h1>
         <button onClick={acceptCall}><h1>Aceptar</h1></button>
       </div>
     )
   } else if (isCalling) {
     mainView = (
       <div>
-        <h1>Llamando {props.opponentUserName}...</h1>
+        <h1>Llamando {props.newUserName}...</h1>
       </div>
     )
   } else {
     mainView = (
       <button onClick = {() => {
-        callPeer(props.opponentSocketId)
+        callPeer(props.newUserSocketId)
       }}><h1>Conectar!</h1></button>
     )
   }

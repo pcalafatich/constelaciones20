@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import GradientBar from '../components/common/GradientBar';
 import Navbar from '../components/Navbar';
+import Chat from '../components/Chat';
 // import FiguraDropdown from '../components/FiguraDropdown';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
@@ -12,7 +13,6 @@ import useSound from 'use-sound'
 import chessMove from '../sounds/moveSoundEffect.mp3'
 import Figura from './Figura'
 import piecemap from './Piecemap'
-//import VideoChatApp from '../connection/videochat'
 const socket  = require('../connection/socket').socket
 
 class Constelacion extends React.Component {
@@ -143,14 +143,42 @@ class Constelacion extends React.Component {
                 <div className = "flex flex-col h-720 w-48 items-center gap-4 rounded border-2">
                     <div className = "bg-gray-400 w-full mx-auto text-center" >OPCIONES</div>
                         <button
-                        className="flex rounded-full items-center py-2 px-3 bg-gradient focus:outline-none shadow-lg"
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
                         onClick={() => this.agregarFigura(this.state.cantFiguras, this.state.sesionState, true)}>
                         <div className="px-3">
                         <p className="text-white">
                             Agregar Figura
                         </p>
                         </div>
-                    </button>                   
+                        </button>
+                        <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => false}>
+                        <div className="px-3">
+                        <p className="text-white">
+                             Quitar Figura
+                        </p>
+                        </div>
+                    </button>
+                    <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => false }>
+                        <div className="px-3">
+                        <p className="text-white">
+                            Agregar Flecha
+                        </p>
+                        </div>
+                    </button>
+                    <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => false }>
+                        <div className="px-3">
+                        <p className="text-white">
+                            Etiqueta Figura
+                        </p>
+                        </div>
+                    </button>
+
                   </div>
                 <div className = " h-720 w-72 bg-gray-400 rounded border-2">
                 <Stage width = {720} height = {720}>
@@ -233,7 +261,7 @@ const ConstelacionWrapper = () => {
             console.log("newUserDidJoinTheGame: ", newUserDidJoinTheGame);
             console.log("START!")
             console.log("newUserName: ", newUserName);
-            console.log("props.userName: ", userName);
+            console.log("userName: ", userName);
             if (newUserName !== userName) {
                 setUserName(newUserName)
                 didJoinGame(true)
@@ -281,16 +309,11 @@ const ConstelacionWrapper = () => {
                 playAudio={play}
                 sesionId={sesionId}
               />
-                <div className = "flex flex-col p-2 mt-2 w-full h-720">
-                    <div className = "h-1/2 border-2 border-gray-400">VIDEOCHAT
-                    {/*<VideoChatApp
-                        mySocketId={socket.id}
-                        newUserSocketId={newUserSocketId}
-                        userName={props.userName}
-                        opponentUserName={opponentUserName}
-                    />*/}
+                <div className = "flex flex-col p-2 mt-2 w-full h-full border-2" >
+                    <div className = "h-720 border-2 border-gray-400">
+                        <div className = "bg-gray-400 w-full mx-auto text-center" >CHAT</div>
                     </div>
-                    <div className = "h-1/2 border-2 border-gray-400">CHAT</div>
+                    <Chat nombre={userName}/>
                 </div>
             </div>
           </div>

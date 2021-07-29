@@ -18,7 +18,7 @@ const JoinSesionRoom = (sesionid, userName, isAdmin) => {
         userName : userName,
         isAdmin: isAdmin
     }
-    console.log("joinsesion - IDdATA", idData);
+    console.log("joinsesion - IdData", idData);
     socket.emit("userJoinSesion", idData)
 }
 

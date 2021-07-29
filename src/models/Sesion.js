@@ -25,6 +25,10 @@ class Sesion {
 
     moverFigura(figuraId, to, isMyMove) {
 
+        console.log("FiguraId:", figuraId);
+        console.log("To:", to);
+        console.log("IsMyMove:",isMyMove);
+        
         /* Mover figura Cual, hacia donde */
 
         const to2D = {
@@ -35,7 +39,6 @@ class Sesion {
         let actualTablero = this.getTablero()
         const coordenadasFigura = this.encontrarFigura(actualTablero, figuraId)
         // console.log("coordenadasFigura", coordenadasFigura )
-
 
         // Si no puede encontrar las coordenadas de la figura
         // es qu la figura no esta en el Tablero
@@ -68,12 +71,28 @@ class Sesion {
 
         const i = cantFiguras;
         console.log('Entrado');
-        const to2D = {
-            105:0, 195:1, 285: 2, 375: 3, 465: 4, 555: 5, 645: 6, 735: 7
-        }
+        // const to2D = {
+        //     105:0, 195:1, 285: 2, 375: 3, 465: 4, 555: 5, 645: 6, 735: 7
+        // }
         
-        const figuras = ["hombre_amarillo", "hombre_rojo", "hombre_verde", "hombre_celeste","hombre_naranja", "hombre_gris", "hombre_negro", "hombre_azul"]
-        const figurasId = ["Hombre Amarillo", "Hombre Rojo", "Hombre Verde", "Hombre Celeste", "Hombre Naranja", "Hombre Gris", "Hombre Negro", "Hombre Azul"]
+        const figuras = [   "hombre_amarillo", 
+                            "hombre_rojo", 
+                            "hombre_verde", 
+                            "hombre_celeste",
+                            "hombre_naranja", 
+                            "hombre_gris", 
+                            "hombre_negro", 
+                            "hombre_azul"
+                        ]
+        const figurasId = [ "Hombre Amarillo", 
+                            "Hombre Rojo", 
+                            "Hombre Verde", 
+                            "Hombre Celeste", 
+                            "Hombre Naranja", 
+                            "Hombre Gris", 
+                            "Hombre Negro", 
+                            "Hombre Azul"
+                        ]
         // console.log("SESION - figuraId", figuraId)
         let actualTablero = this.getTablero();
 
@@ -85,7 +104,7 @@ class Sesion {
 
         // (coordenadasFigura === null) ?
         //         //  console.log('El valor es null')
-        actualTablero[0][7].setFigura(new Personaje(figuras[i], figurasId[i]))
+        actualTablero[0][0].setFigura(new Personaje(figuras[i], figurasId[i]))
         //         :
         //         // console.log('El valor NO es null')
         //        actualTablero[1][7].setFigura(new Personaje(figuras[1], figurasId[1]))

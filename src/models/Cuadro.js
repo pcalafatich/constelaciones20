@@ -19,9 +19,11 @@ class Cuadro {
             newFigura.setCuadro(this)
         } else if (this.getFiguraIdEnEsteCuadro() !== newFigura.id) {
             // la funcion que llama a Cuadro quiere cambiar la Figura que esta ubicada en él
-            console.log("Figura cambiada????")
-            this.figuraIdEnEsteCuadro = newFigura
-            newFigura.setCuadro(this)
+
+            const anteriorFigura =  this.getFiguraIdEnEsteCuadro();
+            console.log("Figura cambiada????:", anteriorFigura );
+            this.figuraIdEnEsteCuadro = newFigura;
+            newFigura.setCuadro(this);
         }
     }
 
