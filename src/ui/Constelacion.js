@@ -4,7 +4,7 @@ import React, {
 import GradientBar from '../components/common/GradientBar';
 import Navbar from '../components/Navbar';
 import Chat from '../components/Chat';
-// import FiguraDropdown from '../components/FiguraDropdown';
+import FiguraDropdown from '../components/FiguraDropdown';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
 import Cuadro from '../models/Cuadro';
@@ -21,7 +21,8 @@ class Constelacion extends React.Component {
         this.state = {
             sesionState: new Sesion(),
             cantFiguras: 0,
-            draggedPieceTargetId: ""
+            draggedPieceTargetId: "",
+            eliminarFiguraId: ""
         }
     }
 
@@ -46,6 +47,39 @@ class Constelacion extends React.Component {
         })
     }
 
+    onDblClickFigura = (e) => {
+        this.setState({
+            eliminarFiguraId: e.target.attrs.id
+        })
+
+        this.eliminarFigura(this.state.eliminarFiguraId, this.state.sesionState, true)
+
+    }
+
+    eliminarFigura = (eliminarFiguraId, actualSesion, isMyMove) => {
+        eliminarFiguraId = this.state.eliminarFiguraId
+        actualSesion = this.state.sesionState
+        
+        actualSesion.eliminarFigura(eliminarFiguraId)
+
+         // notificamos a los otros que hicimos un movimiento
+         if (isMyMove) {
+            console.log("Constelacion isMyMove", isMyMove);
+            socket.emit('elimina figura', {
+                eliminarFiguraId: eliminarFiguraId,
+                sesionId: this.props.sesionId
+            })
+        }
+
+
+        // this.props.playAudio()
+
+        // establecemos el state.
+        this.setState({
+            eliminarFiguraId: "" ,
+            sesionState: actualSesion
+        })
+    }
 
     moverFigura = (selectedId, finalPosition, actualSesion, isMyMove) => {
       console.log("Constelacion moverfigura selectedId:", selectedId)
@@ -153,15 +187,6 @@ class Constelacion extends React.Component {
                         </button>
                         <button
                         className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
-                        onClick={() => false}>
-                        <div className="px-3">
-                        <p className="text-white">
-                             Quitar Figura
-                        </p>
-                        </div>
-                    </button>
-                    <button
-                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
                         onClick={() => false }>
                         <div className="px-3">
                         <p className="text-white">
@@ -197,6 +222,7 @@ class Constelacion extends React.Component {
                                             draggedPieceTargetId = {this.state.draggedPieceTargetId}
                                             onDragStart = {this.startDragging}
                                             onDragEnd = {this.endDragging}
+                                            onDblClick = {this.onDblClickFigura}
                                             id = {Cuadro.getFiguraIdEnEsteCuadro()}
                                             />)
                                 }

@@ -118,7 +118,43 @@ class Sesion {
         return
     }
     
-    
+   eliminarFigura(figuraId) {
+
+        console.log("FiguraId:", figuraId);
+        
+        /* Eliminar Figura Cual */
+
+        // const to2D = {
+        //     105:0, 195:1, 285: 2, 375: 3, 465: 4, 555: 5, 645: 6, 735: 7
+        // }
+
+        // console.log("SESION - figuraId", figuraId)
+        let actualTablero = this.getTablero()
+        const coordenadasFigura = this.encontrarFigura(actualTablero, figuraId)
+        // console.log("coordenadasFigura", coordenadasFigura )
+
+        // Si no puede encontrar las coordenadas de la figura
+        // es qu la figura no esta en el Tablero
+
+        if (!coordenadasFigura) {
+            return
+        }
+
+        const y = coordenadasFigura[1]
+        const x = coordenadasFigura[0]
+
+        // console.log("originalFigura", originalFigura);
+
+        // Actualizamos el modelo del tablero con la posicion nueva
+          actualTablero[y][x].setFigura(null);
+    //    }
+
+        // actualizamos el Tablero
+        this.setTablero(actualTablero)
+    }
+
+
+
 
     encontrarFigura(Tablero, figuraId) {
       // tablero, String -> [Int, Int]

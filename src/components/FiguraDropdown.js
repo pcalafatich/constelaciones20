@@ -47,6 +47,21 @@ const FiguraDropdown = () => {
       title: 'Rojo',
       icon: faSignOutAlt,
       onClick: auth.logout
+    },
+    {
+      title: 'Amarillo',
+      icon: faSignOutAlt,
+      onClick: auth.logout
+    },
+    {
+      title: 'Verde',
+      icon: faSignOutAlt,
+      onClick: auth.logout
+    },
+    {
+      title: 'Azul',
+      icon: faSignOutAlt,
+      onClick: auth.logout
     }
   ];
 

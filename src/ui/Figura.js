@@ -18,6 +18,7 @@ const Figura = (props) => {
          height = {isDragged ? 120 : 100}
          onDragStart = {props.onDragStart}
          onDragEnd = {props.onDragEnd}
+         onDblClick = {props.onDblClick}
          id = {props.id}
          />;
 };
