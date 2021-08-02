@@ -208,7 +208,7 @@ class Constelacion extends React.Component {
                 <div className = " h-720 w-72 bg-gray-400 rounded border-2">
                 <Stage width = {720} height = {720}>
                     <Layer>
-                    <Text text="Para eliminar una figura hacer doble click sobre ella" x={5} y={5} />
+                    <Text text="Debe mover la figura ingresada antes de ingresar la siguiente - Para eliminar una figura hacer doble click sobre ella" x={5} y={5} />
                     {this.state.sesionState.getTablero().map((row, index) => {
                     return (<React.Fragment key = {index}>
                             {row.map((Cuadro) => {
