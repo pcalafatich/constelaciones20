@@ -4,7 +4,7 @@ import React, {
 import GradientBar from '../components/common/GradientBar';
 import Navbar from '../components/Navbar';
 import Chat from '../components/Chat';
-import FiguraDropdown from '../components/FiguraDropdown';
+//import FiguraDropdown from '../components/FiguraDropdown';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
 import Cuadro from '../models/Cuadro';

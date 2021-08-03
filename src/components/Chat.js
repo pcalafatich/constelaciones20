@@ -10,26 +10,26 @@ const Chat = ({ nombre }) => {
   const [mensajes, setMensajes] = useState([]);
 
   useEffect(() => {
+    console.log('Chat: Usuario conectado');
     socket.emit("conectado", nombre);
   }, [nombre]);
 
   useEffect(() => {
     socket.on("mensajes", (mensaje) => {
+      console.log('Chat: Mensaje recibido');
       setMensajes([...mensajes, mensaje]);
     });
-
-    // return () => {
-    //   socket.off();
-    // };
   }, [mensajes]);
 
   const divRef = useRef(null);
   useEffect(() => {
     divRef.current.scrollIntoView({ behavior: "smooth" });
-  });
+  }, [mensajes]);
 
+  
   const submit = (e) => {
     e.preventDefault();
+    console.log('Chat: Mensaje enviado');
     socket.emit("mensaje", nombre, mensaje);
     setMensaje("");
   };
@@ -38,18 +38,20 @@ const Chat = ({ nombre }) => {
     <div >
       <div id="messages" className = "flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
         {mensajes.map((e, i) => (
-          <div key={i}>
-          <React.Fragment>
-            <div className={miNombre === e.nombre ? 'flex items-end justify-end' : 'flex items-start justify-start' }>
-              <div>
-                <span className={miNombre === e.nombre ? 'px-4 py-2 rounded-lg inline-block rounded-bl-none bg-green-400 text-white items-end' :
-              'px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white '} >{e.nombre}: {e.mensaje}</span></div>
+        <div key={i}>
+        <React.Fragment>
+          <div className={miNombre === e.nombre ? 'flex items-end justify-end' : 'flex items-start justify-start' }>
+            <div>
+              <span className={miNombre === e.nombre ? 'px-4 py-2 rounded-lg inline-block rounded-bl-none bg-green-400 text-white items-end' :
+              'px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white '} >{e.nombre}: {e.mensaje}</span>
             </div>
-          </React.Fragment>
           </div>
+        </React.Fragment>
+        </div>
         ))}
         <div ref={divRef}></div>
       </div>
+
       <div className="border-t-2 border-gray-300 px-4 pt-4 mb-2 sm:mb-0">
         <div className="relative flex">
           <form onSubmit={submit}>
@@ -60,11 +62,11 @@ const Chat = ({ nombre }) => {
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
                 </svg>
               </button>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
   );
 };
 
