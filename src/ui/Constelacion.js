@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import GradientBar from '../components/common/GradientBar';
 import Navbar from '../components/Navbar';
-import Chat from '../components/Chat';
+import Chat from '../components/Chat-bak';
 //import FiguraDropdown from '../components/FiguraDropdown';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
@@ -330,14 +330,14 @@ const ConstelacionWrapper = () => {
 
 
 
-        <div>
+        <div className="border-2 border-red-500 ">
             <div className = "flex">
               <Constelacion
                 playAudio={play}
                 sesionId={sesionId}
               />
-                <div className = "flex flex-col p-2 mt-2 w-full h-full border-2" >
-                    <div className = "h-720 border-2 border-gray-400">
+                <div className = "flex flex-col p-2 mt-2 w-full border-2" >
+                    <div className = "border-2 border-gray-400">
                         <div className = "bg-gray-400 w-full mx-auto text-center" >CHAT</div>
                     </div>
                     <Chat nombre={userName}/>
