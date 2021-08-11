@@ -44,22 +44,12 @@ const FiguraDropdown = () => {
 
   const dropdownItems = [
     {
-      title: 'Rojo',
+      title: 'Masculina',
       icon: faSignOutAlt,
-      onClick: auth.logout
+      onClick: () => this.agregaFigura(this.state.cantFiguras, this.state.sesionState, true)
     },
     {
-      title: 'Amarillo',
-      icon: faSignOutAlt,
-      onClick: auth.logout
-    },
-    {
-      title: 'Verde',
-      icon: faSignOutAlt,
-      onClick: auth.logout
-    },
-    {
-      title: 'Azul',
+      title: 'Femenina',
       icon: faSignOutAlt,
       onClick: auth.logout
     }

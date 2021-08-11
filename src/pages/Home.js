@@ -51,7 +51,7 @@ const Home = () => {
             <h1 className="text-gray-200 text-2xl lg:text-6xl sm:text-5xl font-bold leading-tight">
               Constelaciones Familiares
             </h1>
-            <p className="text-gray-400 text-md sm:text-2xl sm:mt-10 mt-4">
+            <p className="text-gray-700 text-md sm:text-2xl sm:mt-10 mt-4">
             Una técnica psicológica sistémica, que permite activar la Fuerza de la Vida, de Amor y de Sanación de la familia, mediante la resolución de conflictos que se transmitieron inconscientemente de generación tras generación, de la misma manera que la información genética.
             </p>
             <div className="mt-4 sm:mt-10 w-48">

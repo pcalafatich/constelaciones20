@@ -2,9 +2,10 @@ import React, {
     useContext
 } from 'react';
 import GradientBar from '../components/common/GradientBar';
+import Tablero from '../images/tablero.png';
 import Navbar from '../components/Navbar';
-import Chat from '../components/Chat-bak';
-//import FiguraDropdown from '../components/FiguraDropdown';
+import MiniChat from '../components/MiniChat';
+import FiguraDropdown from '../components/FiguraDropdown';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
 import Cuadro from '../models/Cuadro';
@@ -20,7 +21,8 @@ class Constelacion extends React.Component {
     super(props);
         this.state = {
             sesionState: new Sesion(),
-            cantFiguras: 0,
+            cantFigurasH: 0,
+            cantFigurasM: 0,
             draggedPieceTargetId: "",
             eliminarFiguraId: ""
         }
@@ -35,7 +37,8 @@ class Constelacion extends React.Component {
 
      socket.on('agrega_figura_ajeno', agrega => {
          console.log("agrega figura ajeno: ",  agrega.cantFiguras);
-         this.agregarFigura(agrega.cantFiguras, this.state.sesionState,  false)
+         console.log("agrega figura, tipo:", agrega.tipo);
+         this.agregaFigura(agrega.cantFiguras, this.state.sesionState, agrega.tipo, false)
          })
     
    }
@@ -57,8 +60,8 @@ class Constelacion extends React.Component {
     }
 
     eliminarFigura = (eliminarFiguraId, actualSesion, isMyMove) => {
-        eliminarFiguraId = this.state.eliminarFiguraId
-        actualSesion = this.state.sesionState
+        //eliminarFiguraId = this.state.eliminarFiguraId
+        //actualSesion = this.state.sesionState
         
         actualSesion.eliminarFigura(eliminarFiguraId)
 
@@ -109,18 +112,18 @@ class Constelacion extends React.Component {
         })
     }
 
-    agregarFigura = (cantFiguras, actualSesion, isMyMove) => {
+    agregaFigura = (cantFiguras, actualSesion, tipo, isMyMove) => {
         
         console.log('Cantidad Figuras antes:', cantFiguras);
         
-        actualSesion.agregarFigura(cantFiguras)
+        actualSesion.agregarFigura(cantFiguras, tipo)
 
         // notificamos a los otros que agregamos una figura
         if (isMyMove) {
             console.log("Constelacion isMyMove", isMyMove);
             socket.emit('agrega figura', {
                 cantFiguras: cantFiguras,
-                // finalPosition: finalPosition,
+                tipo: tipo,
                 sesionId: this.props.sesionId
             })
         }
@@ -129,12 +132,19 @@ class Constelacion extends React.Component {
     // this.props.playAudio()
 
     // establecemos el state.
-
-        this.setState({
-            sesionState: actualSesion,
-            cantFiguras: cantFiguras + 1,
-        })
-        console.log('Cantidad Figuras despues:', this.state.cantFiguras);
+ 
+        if (tipo === 'H') {
+            this.setState({
+                sesionState: actualSesion,
+                cantFigurasH : cantFiguras + 1
+            })    
+        } else {
+            this.setState({
+                sesionState: actualSesion,
+                cantFigurasM : cantFiguras + 1})
+        }
+        console.log('Cantidad FigurasH despues:', this.state.cantFigurasH);
+        console.log('Cantidad FigurasM despues:', this.state.cantFigurasM); 
     }
 
     endDragging = (e) => {
@@ -173,18 +183,29 @@ class Constelacion extends React.Component {
     render() {
         return (
         <React.Fragment>
+        
             <div className = "flex gap-4 p-4" > 
                 <div className = "flex flex-col h-720 w-48 items-center gap-4 rounded border-2">
                     <div className = "bg-gray-400 w-full mx-auto text-center" >OPCIONES</div>
-                        <button
+                    <button
                         className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
-                        onClick={() => this.agregarFigura(this.state.cantFiguras, this.state.sesionState, true)}>
+                        onClick={() => this.agregaFigura(this.state.cantFigurasH, this.state.sesionState, 'H', true)}>
                         <div className="px-3">
                         <p className="text-white">
-                            Agregar Figura
+                            Agrega Figura H
                         </p>
                         </div>
                         </button>
+                        <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => this.agregaFigura(this.state.cantFigurasM, this.state.sesionState, 'M', true)}>
+                        <div className="px-3">
+                        <p className="text-white">
+                            Agrega Figura M
+                        </p>
+                        </div>
+                        </button>
+
                         <button
                         className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
                         onClick={() => false }>
@@ -205,7 +226,10 @@ class Constelacion extends React.Component {
                     </button>
 
                   </div>
-                <div className = " h-720 w-72 bg-gray-400 rounded border-2">
+                  <div style = {{
+                    backgroundImage: `url(${Tablero})`,
+                    width: "720px",
+                    height: "720px"}}>
                 <Stage width = {720} height = {720}>
                     <Layer>
                     <Text text="Debe mover la figura ingresada antes de ingresar la siguiente - Para eliminar una figura hacer doble click sobre ella" x={5} y={5} />
@@ -233,8 +257,10 @@ class Constelacion extends React.Component {
                         })}
                     </Layer>
                 </Stage>
+
             </div>
         </div>
+    
     </React.Fragment>)
     }
 }
@@ -330,17 +356,11 @@ const ConstelacionWrapper = () => {
 
 
 
-        <div className="border-2 border-red-500 ">
-            <div className = "flex">
-              <Constelacion
-                playAudio={play}
-                sesionId={sesionId}
-              />
-                <div className = "flex flex-col p-2 mt-2 w-full border-2" >
-                    <div className = "border-2 border-gray-400">
-                        <div className = "bg-gray-400 w-full mx-auto text-center" >CHAT</div>
-                    </div>
-                    <Chat nombre={userName}/>
+            <div>
+                <div className = "flex">
+                    <Constelacion playAudio={play} sesionId={sesionId} />
+                <div className = "flex flex-col w-full" >
+                    <MiniChat nombre={userName}/>
                 </div>
             </div>
           </div>
