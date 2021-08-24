@@ -6,7 +6,7 @@ class Personaje {
 
     setCuadro(newCuadro) {
         // Define el cuadro donde la figura esta ubicada. 
-        console.log(newCuadro)
+        //console.log(newCuadro)
         if (newCuadro === undefined) {
             this.cuadroDeLaFigura = newCuadro
             return 

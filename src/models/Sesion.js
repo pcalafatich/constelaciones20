@@ -23,11 +23,10 @@ class Sesion {
         this.tablero = newTablero
     }
 
-    moverFigura(figuraId, to, isMyMove) {
+    moverFigura(figuraId, to) {
 
         console.log("FiguraId:", figuraId);
         console.log("To:", to);
-        console.log("IsMyMove:",isMyMove);
         
         /* Mover figura Cual, hacia donde */
 
@@ -111,6 +110,7 @@ class Sesion {
                                 "H15",
                             ]
                             let actualTablero = this.getTablero();
+                            console.log("Actual Tablero:", actualTablero)
                             actualTablero[0][0].setFigura(new Personaje(figuras[i], figurasId[i]))
                             // // actualizamos el Tablero
                             this.setTablero(actualTablero);
@@ -163,7 +163,7 @@ class Sesion {
     
    eliminarFigura(figuraId) {
 
-        console.log("FiguraId:", figuraId);
+        console.log("Eliminar FiguraId:", figuraId);
         
         // console.log("SESION - figuraId", figuraId)
         let actualTablero = this.getTablero()
@@ -184,9 +184,7 @@ class Sesion {
         this.setTablero(actualTablero)
     }
 
-
-
-
+   
     encontrarFigura(Tablero, figuraId) {
       // tablero, String -> [Int, Int]
       //  console.log("figura buscada: " + figuraId)
@@ -213,18 +211,7 @@ class Sesion {
                 tableroInicial[i].push(cuadrovacio)
             }
         }
-        
-        // Definimos ubicacion inicial de las figuras
-        // const figuras = ["hombre_amarillo", "hombre_rojo", "hombre_verde", "hombre_celeste","hombre_naranja", "hombre_gris", "hombre_negro", "hombre_azul"]
-        // const figurasId = ["Hombre Amarillo", "Hombre Rojo", "Hombre Verde", "Hombre Celeste", "Hombre Naranja", "Hombre Gris", "Hombre Negro", "Hombre Azul"]
-        // tableroInicial[0][0].setFigura(new Personaje(figuras[0], figurasId[0]))
-        // tableroInicial[0][1].setFigura(new Personaje(figuras[1], figurasId[1]))
-        // tableroInicial[0][2].setFigura(new Personaje(figuras[2], figurasId[2]))
-        // tableroInicial[0][3].setFigura(new Personaje(figuras[3], figurasId[3]))
-        // tableroInicial[0][4].setFigura(new Personaje(figuras[4], figurasId[4]))
-        // tableroInicial[0][5].setFigura(new Personaje(figuras[5], figurasId[5]))
-        // tableroInicial[0][6].setFigura(new Personaje(figuras[6], figurasId[6]))
-        // tableroInicial[0][7].setFigura(new Personaje(figuras[7], figurasId[7]))
+                
         return tableroInicial
     }
 }

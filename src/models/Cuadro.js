@@ -43,7 +43,7 @@ class Cuadro {
     }
 
     isOccupied() {
-        return this.figuraIdEnEsteCuadro != null
+        return this.figuraIdEnEsteCuadro !== null
     }
 
     getCoord() {
