@@ -238,6 +238,14 @@ class Constelacion extends React.Component {
         }
 
     }
+
+    eliminarFlechas = () => {
+
+        this.setState({
+            flechas: []
+       })
+
+    }
     
     endDragging = (e) => {
         const actualSesion = this.state.sesionState
@@ -306,8 +314,7 @@ class Constelacion extends React.Component {
         return hashmap[menorDistancia]
     }
 
-
-
+    
     render() {
         return (<React.Fragment>
             <div className = "flex gap-4 p-4"> 
@@ -353,6 +360,15 @@ class Constelacion extends React.Component {
                         <p className="text-white">Elimina seleccion</p>
                         </div>
                     </button>
+
+                    <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => this.eliminarFlechas() }>
+                        <div className="px-3">
+                        <p className="text-white">Elimina Flechas</p>
+                        </div>
+                    </button>
+
                 </div>
 
                 <div style = {{
