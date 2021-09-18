@@ -16,6 +16,7 @@ import { FetchProvider } from './context/FetchContext';
 import AppShell from './AppShell';
 
 import Home from './pages/Home';
+import Sobremi from './pages/Sobremi';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import FourOFour from './pages/FourOFour';
@@ -37,6 +38,9 @@ const LoadingFallback = () => (
 
 const UnauthenticatedRoutes = () => (
   <Switch>
+    <Route path="/sobremi">
+      <Sobremi />
+    </Route>
     <Route path="/login">
       <Login />
     </Route>

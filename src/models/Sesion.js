@@ -174,8 +174,8 @@ class Sesion {
             return
         }
 
-        const y = coordenadasFigura[1]
         const x = coordenadasFigura[0]
+        const y = coordenadasFigura[1]
 
         // Actualizamos el modelo del tablero con la posicion nueva
         actualTablero[y][x].setFigura(null);
@@ -184,6 +184,7 @@ class Sesion {
         this.setTablero(actualTablero)
     }
 
+    
    
     encontrarFigura(Tablero, figuraId) {
       // tablero, String -> [Int, Int]

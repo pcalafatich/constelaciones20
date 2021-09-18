@@ -15,11 +15,17 @@ const Home = () => {
       <div className="w-full top-0 bg-white px-10 py-5">
         <div className="flex justify-between">
           <img
-            className="w-56 h-full"
+            className="sm:w-32 lg:w-56 h-full"
             src={logo}
             alt="Logo"
           />
           <div className="flex items-center">
+          <Link
+            to="/sobremi"
+            className="text-blue-700 mr-6"
+            >
+            Contacto
+          </Link>
             <Link
               to="/signup"
               className="text-blue-700 mr-6"

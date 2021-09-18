@@ -63,7 +63,7 @@ const Signup = () => {
   return (
     <>
       {redirectOnLogin && <Redirect to="/dashboard" />}
-      <section className="w-1/2 h-screen m-auto p-8 sm:pt-10">
+      <section className="w-full h-screen m-auto p-8 sm:pt-10">
         <GradientBar />
         <Card>
           <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
