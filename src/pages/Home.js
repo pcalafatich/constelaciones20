@@ -24,6 +24,12 @@ const Home = () => {
             to="/sobremi"
             className="text-blue-700 mr-6"
             >
+            Sobre Mí
+          </Link>
+          <Link
+            to="/contacto"
+            className="text-blue-700 mr-6"
+            >
             Contacto
           </Link>
             <Link

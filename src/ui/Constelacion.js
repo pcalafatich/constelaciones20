@@ -61,13 +61,25 @@ class Constelacion extends React.Component {
         })
     }
 
+    endDragging = (e) => {
+        const actualSesion = this.state.sesionState
+        const actualTablero = actualSesion.getTablero()
+        const selectedId = this.state.draggedPieceTargetId
+        const finalPosition = this.inferCoord(e.target.x() + 90, e.target.y() + 90, actualTablero)
+
+        this.moverFigura(selectedId, finalPosition, actualSesion, true)
+        //this.posicionActualFigura(selectedId, actualSesion)
+    }
+
     onDblClickFigura = (e) => {
 
+        // Si esta seleccionado quita la seleccion
         if (this.state.borderedId === e.target.attrs.id) {
             this.setState({
                 borderedId: ""
             })
-    
+
+        // Si no está seleccionado guarda el objeto seleccionado en el estado
         } else {
             this.setState({
                 borderedId: e.target.attrs.id
@@ -78,6 +90,8 @@ class Constelacion extends React.Component {
 
     onClickFigura = (e) => {
 
+        console.log("posicion x:", e.target.x())
+        console.log("posicion y:", e.target.y())
         // Si esta seleccionado la figura 1 la deselecciona
         if (this.state.selectedId === e.target.attrs.id ) {
             this.setState({
@@ -214,21 +228,43 @@ class Constelacion extends React.Component {
         }
     }
 
+    posicionActualFigura = (figuraId) => {
 
+        const actualSesion = this.state.sesionState
+
+        const actualPosicion = actualSesion.posicionActualFigura(figuraId)
+
+        //console.log("actual Posicion: ", actualPosicion)
+        return actualPosicion
+
+    }
     
-    agregarFlecha = () => {
+    agregarFlecha = (ismyMove) => {
         if (this.state.selectedId && this.state.selectedId2 !== "") {
             
             const id = this.state.flechas.length + 1
-            const desdex = this.state.position[0]
-            const desdey = this.state.position[1]
-            const hastax = this.state.position2[0]
-            const hastay = this.state.position2[1]
-            
-            this.setState({
-                 flechas: [...this.state.flechas, {id, desdex, desdey, hastax, hastay}]
-            })
+            // const desdex = this.state.position[0]
+            // const desdey = this.state.position[1]
+            // const hastax = this.state.position2[0]
+            // const hastay = this.state.position2[1]
+    
+            const desdeId = this.state.selectedId
+            const hastaId = this.state.selectedId2
 
+            this.setState({
+//                 flechas: [...this.state.flechas, {id, desdex, desdey, hastax, hastay}]
+                flechas: [...this.state.flechas, {id, desdeId, hastaId}]
+            })
+            
+            // notificamos a los otros que agregamos una figura
+            if (isMyMove) {
+                socket.emit('agrega flecha', {
+                    id: id,
+                    desdeId: desdeId,
+                    hastaId: hastaId
+                })
+        }
+            
             this.eliminarSeleccion()
             
         } else {
@@ -247,16 +283,11 @@ class Constelacion extends React.Component {
 
     }
     
-    endDragging = (e) => {
-        const actualSesion = this.state.sesionState
-        const actualTablero = actualSesion.getTablero()
-        const selectedId = this.state.draggedPieceTargetId
-        const finalPosition = this.inferCoord(e.target.x() + 90, e.target.y() + 90, actualTablero)
+    moverFlecha = (figuraId) => {
 
-        this.moverFigura(selectedId, finalPosition, actualSesion, true)
+
     }
-
-    
+        
     revertirMovimiento = (selectedId) => {
         /**
          * Actualiza el tablero a como estaba antes del movimiento.
@@ -347,7 +378,7 @@ class Constelacion extends React.Component {
                     <button
                         disabled={this.state.disableFlecha}
                         className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
-                        onClick={() => this.agregarFlecha() }>
+                        onClick={() => this.agregarFlecha(true) }>
                         <div className="px-3">
                             <p className="text-white">Agregar Flecha</p>
                         </div>
@@ -406,12 +437,17 @@ class Constelacion extends React.Component {
                         })}
                         {this.state.flechas.map(flecha => {
                             console.log("Flechas:", this.state.flechas)
-                            // const desde = flecha.desde
-                            // const hasta = flecha.hasta
-                            return (
+                            const origen = this.posicionActualFigura(flecha.desdeId)
+                            const destino = this.posicionActualFigura(flecha.hastaId)
+                            // console.log("origen: ", origen)
+                            // console.log("destino: ", destino)
+
+                             //const desde = flecha.desde
+                             //const hasta = flecha.hasta
+                             return (
                               <Arrow
                                 key={flecha.id}
-                                points={[flecha.desdex, flecha.desdey, flecha.hastax, flecha.hastay]}
+                                points={[origen[0], origen[1], destino[0], destino[1]]}
                                 pointerLength = {10}
                                 pointerWidth = {10}
                                 fill = {'black'}

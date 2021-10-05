@@ -25,8 +25,8 @@ class Sesion {
 
     moverFigura(figuraId, to) {
 
-        console.log("FiguraId:", figuraId);
-        console.log("To:", to);
+        //console.log("FiguraId:", figuraId);
+        //console.log("To:", to);
         
         /* Mover figura Cual, hacia donde */
 
@@ -186,16 +186,43 @@ class Sesion {
 
     
    
-    encontrarFigura(Tablero, figuraId) {
+    encontrarFigura(tablero, figuraId) {
       // tablero, String -> [Int, Int]
       //  console.log("figura buscada: " + figuraId)
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (Tablero[i][j].getFiguraIdEnEsteCuadro() === figuraId) {
+                if (tablero[i][j].getFiguraIdEnEsteCuadro() === figuraId) {
                     return [j, i]
                 }
             }
         }
+    }
+
+    posicionActualFigura(figuraId) {
+
+        const to2D = {
+            0:65, 1:135, 2:225, 3:315, 4: 405, 5: 495, 6: 585, 7: 675
+        }
+        let actualTablero = this.getTablero()
+        const coordenadasFigura = this.encontrarFigura(actualTablero, figuraId)
+
+        if (!coordenadasFigura) {
+            return
+        }
+
+        console.log("Posicion actual Figura: ", coordenadasFigura)
+
+        //const x = coordenadasFigura[0]
+        //const y = coordenadasFigura[1]
+
+        // nuevas coordenadas
+        const to_x = to2D[coordenadasFigura[0]]
+        const to_y = to2D[coordenadasFigura[1]]
+        // console.log("Posicion Figura X: ", to_x)
+        // console.log("Posicion Figura y: ", to_y)
+
+        return [to_x, to_y]
+
     }
 
     creaTableroInicial() {
