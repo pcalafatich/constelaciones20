@@ -1,8 +1,11 @@
-import io from 'socket.io-client'
+//import io from 'socket.io-client'
 
 // const URL = 'localhost:8000/'
+const io = require("socket.io-client");
 const URL = 'https://auth-mini-api.herokuapp.com/'
 const socket = io(URL)
+
+
 let mySocketId = null
 
 socket.on("createNewSesion", statusUpdate => {

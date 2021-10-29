@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Formik, Field } from 'formik';
 import * as Yup from 'yup';
 import Card from '../components/common/Card';
@@ -7,15 +7,14 @@ import emailjs from 'emailjs-com';
 //import Hyperlink from '../components/common/Hyperlink';
 import Label from '../components/common/Label';
 import FormInput from '../components/FormInput';
-import { AuthContext } from '../context/AuthContext';
 import GradientBar from './../components/common/GradientBar';
 import FormError from './../components/FormError';
 import FormSuccess from './../components/FormSuccess';
-import { publicFetch } from './../util/fetch';
 import logo from './../images/logo.png';
 import { Redirect } from 'react-router-dom';
 import ApiKey from './ApiKey'; 
 
+//VALIDACIONES DE CAMPOS DEL FORMULARIO
 const ContactoSchema = Yup.object().shape({
   //Validamos el nombre
   firstName: Yup.string().required(
@@ -26,56 +25,41 @@ const ContactoSchema = Yup.object().shape({
   email: Yup.string()
     .email('Dirección de correo inválida')
     .required('Es obligatorio ingresar el email'),
-   //Validamos el mensaje para que no sea vaccío
-    password: Yup.string().required('El mensaje no puede ser vacio')
+  //Validamos el mensaje para que no sea vaccío
+  message: Yup.string()
+    .required('El mensaje no puede ser vacio')
 });
 
 const Contacto = () => {
-  const authContext = useContext(AuthContext);
   const [signupSuccess, setSignupSuccess] = useState();
   const [signupError, setSignupError] = useState();
-  const [redirectOnLogin, setRedirectOnLogin] = useState(false);
+  const [redirectOnContact, setRedirectOnContact] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   
-  const enviarCorreo = (e) => {
-   e.preventDefault()
+ function enviarCorreo (e) {
 
-   emailjs.sendForm('service_m3pdx8t', ApiKey.TEMPLATE_ID, e.target, ApiKey.USER_ID).then(
-       result => {
-           alert('Correo enviado correctamente');
-       },
-       error => {
-           alert( 'Ocurrio un error, intente nuevamente')
-           }
-   )
+    setLoginLoading(true);
+    emailjs.sendForm(ApiKey.SERVICE_ID, ApiKey.TEMPLATE_ID, '#contact-form', ApiKey.USER_ID)
+      .then(
+        result => {
+          setLoginLoading(false);
+          setSignupSuccess('Correo enviado correctamente');
+          setSignupError('');
+          setTimeout(() => {
+            setRedirectOnContact(true);
+          }, 1000);
+        },
+        error => {
+          setLoginLoading(false);
+          setSignupError('Ocurrio un error, intente nuevamente');
+          setSignupSuccess('');
+            }
+    )
 }
  
- 
-  const submitCredentials = async credentials => {
-    try {
-      setLoginLoading(true);
-      const { data } = await publicFetch.post(
-        `signup`,
-        credentials
-      );
-
-      authContext.setAuthState(data);
-      setSignupSuccess(data.message);
-      setSignupError('');
-
-      setTimeout(() => {
-        setRedirectOnLogin(true);
-      }, 700);
-    } catch (error) {
-      setLoginLoading(false);
-      const { data } = error.response;
-      setSignupError(data.message);
-      setSignupSuccess('');
-    }
-  };
-
   return (
     <>
+    {redirectOnContact && <Redirect to="/" />}
       <section className="w-full h-screen m-auto p-8 sm:pt-10">
         <GradientBar />
         <Card>
@@ -100,9 +84,10 @@ const Contacto = () => {
                   mensaje: ''
                 }}
                 onSubmit={enviarCorreo}
+                validationSchema={ContactoSchema}
               >
                 {() => (
-                  <Form className="mt-8">
+                  <Form id="contact-form" className="mt-8">
                     {signupSuccess && (
                       <FormSuccess text={signupSuccess} />
                     )}
@@ -157,7 +142,7 @@ const Contacto = () => {
                         <Field
                          className="rounded p-1 w-full h-56 mb-2"
                          component="textarea"
-                         name="mensaje"
+                         name="message"
                          placeholder="Mensaje"
               />
                       </div>

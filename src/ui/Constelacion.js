@@ -5,6 +5,7 @@ import GradientBar from '../components/common/GradientBar';
 import Tablero from '../images/tablero.png';
 import Navbar from '../components/Navbar';
 import MiniChat from '../components/MiniChat';
+import uniqid from 'uniqid';
 //import classNames from 'classnames';
 import { AuthContext } from '../context/AuthContext';
 import Sesion from '../models/Sesion';
@@ -26,9 +27,6 @@ class Constelacion extends React.Component {
             cantFigurasH: 0,
             cantFigurasM: 0,
             flechas: [],
-            // disableEliminar: true,
-            // disableFlecha: true,
-            // disableEtiqueta: true,
             draggedPieceTargetId: "",
             borderedId: "",
             selectedId: "",
@@ -41,17 +39,44 @@ class Constelacion extends React.Component {
 
     componentDidMount() {
 
-    socket.on('movimiento_ajeno', move => {
-          console.log("movimiento ajeno: " + move.selectedId + ", " + move.finalPosition);
-          this.moverFigura(move.selectedId, move.finalPosition, this.state.sesionState, false)
+        socket.on('movimiento_ajeno', move => {
+            console.log("movimiento ajeno: " + move.selectedId + ", " + move.finalPosition);
+            this.moverFigura(move.selectedId, move.finalPosition, this.state.sesionState, false)
+            })
+
+        socket.on('agrega_figura_ajeno', agrega => {
+            // console.log("agrega figura ajeno: ",  agrega.cantFiguras);
+            // console.log("agrega figura, tipo:", agrega.tipo);
+            this.agregaFigura(agrega.cantFiguras, this.state.sesionState, agrega.tipo, false)
+            })
+
+        socket.on('elimina_figura_ajeno', elimina => {
+            // ELIMINAR FLECHAS ANTES DE ELIMINAR FIGURAS
+            this.eliminarFigura(elimina.eliminarFiguraId, this.state.sesionState,  false)
+            })
+                
+        
+        socket.on('agregar_flecha_ajena', flecha_ajena => {
+            const idFlecha = flecha_ajena.idFlecha
+            const desdeId = flecha_ajena.desdeId
+            const hastaId = flecha_ajena.hastaId
+            const isMyMove = flecha_ajena.isMyMove
+
+            console.log('mimovimientoajeno:', isMyMove)
+
+
+                
+                this.agregarFlechaAjena(idFlecha, desdeId, hastaId)
+
         })
 
-     socket.on('agrega_figura_ajeno', agrega => {
-         console.log("agrega figura ajeno: ",  agrega.cantFiguras);
-         console.log("agrega figura, tipo:", agrega.tipo);
-         this.agregaFigura(agrega.cantFiguras, this.state.sesionState, agrega.tipo, false)
-         })
-    
+        socket.on('remover_flechas_ajena', () => {
+
+            //console.log("isMyMove:", isMyMove)
+            this.eliminarFlechas(false)
+        })
+
+
    }
 
 
@@ -90,8 +115,8 @@ class Constelacion extends React.Component {
 
     onClickFigura = (e) => {
 
-        console.log("posicion x:", e.target.x())
-        console.log("posicion y:", e.target.y())
+       // console.log("posicion x:", e.target.x())
+       // console.log("posicion y:", e.target.y())
         // Si esta seleccionado la figura 1 la deselecciona
         if (this.state.selectedId === e.target.attrs.id ) {
             this.setState({
@@ -154,8 +179,13 @@ class Constelacion extends React.Component {
     
 
     eliminarFigura = (eliminarFiguraId, actualSesion, isMyMove) => {
-        //eliminarFiguraId = this.state.eliminarFiguraId
-        //actualSesion = this.state.sesionState
+
+        // ELIMINAR FLECHAS QUE SALEN O LLEGAN A LA FIGURA ANTES DE ELIMINARLA
+
+        const filtredFlecha = this.state.flechas.filter(flecha => flecha.desdeId !== eliminarFiguraId && flecha.hastaId !== eliminarFiguraId );
+            this.setState({ flechas: filtredFlecha });
+
+        // UNA VEZ ELIMINADA LA FLECHA SE ELIMINA LA FIGURA
         
         actualSesion.eliminarFigura(eliminarFiguraId)
 
@@ -202,29 +232,42 @@ class Constelacion extends React.Component {
 
     agregaFigura = (cantFiguras, actualSesion, tipo, isMyMove) => {
 
-        actualSesion.agregarFigura(cantFiguras, tipo)
+        //VERIFICAR QUE LA ENTRADA NO ESTA OCUPADA
 
-        // notificamos a los otros que agregamos una figura
-        if (isMyMove) {
-            socket.emit('agrega figura', {
-                cantFiguras: cantFiguras,
-                tipo: tipo,
-                sesionId: this.props.sesionId
-            })
-        }
+        const puertaVacia = actualSesion.verificaPuerta()
+        console.log('agregaFigura:', puertaVacia)
 
-    // this.props.playAudio()
-
-    // establecemos el state.
-        if (tipo === 'H') {
-            this.setState({
-                sesionState: actualSesion,
-                cantFigurasH : this.state.cantFigurasH + 1
-            })    
+        if (puertaVacia === "empty") {
+            
+            actualSesion.agregarFigura(cantFiguras, tipo)
+    
+            // notificamos a los otros que agregamos una figura
+            if (isMyMove) {
+                socket.emit('agrega figura', {
+                    cantFiguras: cantFiguras,
+                    tipo: tipo,
+                    sesionId: this.props.sesionId
+                })
+            }
+    
+        // this.props.playAudio()
+    
+        // establecemos el state.
+            if (tipo === 'H') {
+                this.setState({
+                    sesionState: actualSesion,
+                    cantFigurasH : this.state.cantFigurasH + 1
+                })    
+            } else {
+                this.setState({
+                    sesionState: actualSesion,
+                    cantFigurasM : this.state.cantFigurasM + 1})
+            }
+            
         } else {
-            this.setState({
-                sesionState: actualSesion,
-                cantFigurasM : this.state.cantFigurasM + 1})
+
+            alert("El casillero de entrada debe estar vacio antes de ingresar otra Figura!")
+            
         }
     }
 
@@ -239,61 +282,86 @@ class Constelacion extends React.Component {
 
     }
     
-    agregarFlecha = (ismyMove) => {
-        if (this.state.selectedId && this.state.selectedId2 !== "") {
+    agregarFlecha = (isMyMove) => {
+
             
-            const id = this.state.flechas.length + 1
-            // const desdex = this.state.position[0]
-            // const desdey = this.state.position[1]
-            // const hastax = this.state.position2[0]
-            // const hastay = this.state.position2[1]
+            if (this.state.selectedId !== "" && this.state.selectedId2 !== "" ) {
+                
+                const idFlecha = uniqid()
+        
+                const desdeId = this.state.selectedId
+                const hastaId = this.state.selectedId2
     
-            const desdeId = this.state.selectedId
-            const hastaId = this.state.selectedId2
-
-            this.setState({
-//                 flechas: [...this.state.flechas, {id, desdex, desdey, hastax, hastay}]
-                flechas: [...this.state.flechas, {id, desdeId, hastaId}]
-            })
-            
-            // notificamos a los otros que agregamos una figura
-            if (isMyMove) {
-                socket.emit('agrega flecha', {
-                    id: id,
-                    desdeId: desdeId,
-                    hastaId: hastaId
+                
+                // notificamos a los otros que agregamos una flecha
+                if (isMyMove) {
+                    socket.emit('agregar flecha', {
+                        idFlecha: idFlecha,
+                        desdeId: desdeId,
+                        hastaId: hastaId,
+                        sesionId: this.props.sesionId,
+                        isMyMove: false
+                    })
+                }
+                
+                this.setState({
+                    flechas: [...this.state.flechas, {idFlecha, desdeId, hastaId}]
                 })
-        }
-            
-            this.eliminarSeleccion()
-            
-        } else {
-            
-            alert("Debe seleccionar origen y destino de la flecha!")
 
-        }
+                this.eliminarSeleccion()
+                
+            } else {
+                
+                alert("Debe seleccionar origen y destino de la flecha!")
+    
+            }
 
     }
 
-    eliminarFlechas = () => {
+    verificaExisteFlecha(idFlecha) {
+        return this.state.flechas.some(flecha => idFlecha === flecha.idFlecha)
+    }
 
+
+    agregarFlechaAjena = (idFlecha, desdeId, hastaId) => {
+
+        const existe = this.verificaExisteFlecha(idFlecha)
+
+//        console.log('existe:', existe)
+
+        if (!existe) {
+            
+            this.setState({
+                flechas: [...this.state.flechas, {idFlecha, desdeId, hastaId}]
+            })
+        }
+
+
+    }
+
+    eliminarFlechas = (isMyMove) => {
+
+        
+        // notificamos a los otros que agregamos una figura
+        if (isMyMove) {
+            socket.emit('eliminar flechas', {                
+                sesionId: this.props.sesionId
+            })
+        }
+        
         this.setState({
             flechas: []
        })
-
     }
     
-    moverFlecha = (figuraId) => {
-
-
-    }
+   
         
     revertirMovimiento = (selectedId) => {
         /**
          * Actualiza el tablero a como estaba antes del movimiento.
          */
         const oldSesionState = this.state.sesionState
-        const oldTablero = oldSesionState.getBoard()
+        const oldTablero = oldSesionState.getTablero()
         const tmpSesionState = new Sesion(true)
         const tmpTablero = []
 
@@ -394,7 +462,7 @@ class Constelacion extends React.Component {
 
                     <button
                         className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
-                        onClick={() => this.eliminarFlechas() }>
+                        onClick={() => this.eliminarFlechas(true) }>
                         <div className="px-3">
                         <p className="text-white">Elimina Flechas</p>
                         </div>
@@ -446,7 +514,7 @@ class Constelacion extends React.Component {
                              //const hasta = flecha.hasta
                              return (
                               <Arrow
-                                key={flecha.id}
+                                key={flecha.idFlecha}
                                 points={[origen[0], origen[1], destino[0], destino[1]]}
                                 pointerLength = {10}
                                 pointerWidth = {10}
@@ -477,7 +545,7 @@ const ConstelacionWrapper = () => {
     const userName = authState.userInfo.firstName
 
     const sesionId = 'sesion-name';
-    const [play] = useSound(chessMove);
+//    const [play] = useSound(chessMove);
     const [newUserSocketId, setNewUserSocketId] = React.useState('')
     const [newUserDidJoinTheGame, didJoinGame] = React.useState(false)
     const [newUserName, setUserName] = React.useState('')
@@ -561,7 +629,7 @@ const ConstelacionWrapper = () => {
 
             <div>
                 <div className = "flex">
-                    <Constelacion playAudio={play} sesionId={sesionId} />
+                    <Constelacion sesionId={sesionId} />
                 <div className = "flex flex-col w-full" >
                     <MiniChat nombre={userName}/>
                 </div>

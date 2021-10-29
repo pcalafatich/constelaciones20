@@ -66,6 +66,14 @@ class Sesion {
         this.setTablero(actualTablero)
     }
 
+    verificaPuerta() {
+        let actualTablero = this.getTablero();
+        const vacio = actualTablero[0][0].getFiguraIdEnEsteCuadro()
+        console.log('VerificaPuerta: ', vacio)
+        return vacio
+
+    }
+
     agregarFigura(cantFiguras, tipo) {
 
         const i = cantFiguras;
@@ -110,11 +118,8 @@ class Sesion {
                                 "H15",
                             ]
                             let actualTablero = this.getTablero();
-                            console.log("Actual Tablero:", actualTablero)
                             actualTablero[0][0].setFigura(new Personaje(figuras[i], figurasId[i]))
-                            // // actualizamos el Tablero
                             this.setTablero(actualTablero);
-                            console.log('Salido');
                             return
                     
         } else {
@@ -210,7 +215,7 @@ class Sesion {
             return
         }
 
-        console.log("Posicion actual Figura: ", coordenadasFigura)
+       // console.log("Posicion actual Figura: ", coordenadasFigura)
 
         //const x = coordenadasFigura[0]
         //const y = coordenadasFigura[1]
