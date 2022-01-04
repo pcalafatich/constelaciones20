@@ -4,7 +4,6 @@ import { AuthContext } from '../context/AuthContext';
 import GradientLink from '../components/common/GradientLink';
 import GradientBar from '../components/common/GradientBar';
 import logo from './../images/logo.png';
-//import homeimg from './../images/constelaciones-home.jpg';
 import claudia2 from './../images/claudia2.jpg'
 import perfil from './../images/perfil.jpg';
 
