@@ -266,6 +266,8 @@ class Constelacion extends React.Component {
             
         } else {
 
+            console.log('')
+
             alert("El casillero de entrada debe estar vacio antes de ingresar otra Figura!")
             
         }
@@ -352,6 +354,21 @@ class Constelacion extends React.Component {
         this.setState({
             flechas: []
        })
+    }
+    
+    eliminarUltimaFlecha = (isMyMove) => {
+
+        
+        // notificamos a los otros que agregamos una figura
+        if (isMyMove) {
+            socket.emit('elimina ultima flecha', {                
+                sesionId: this.props.sesionId
+            })
+        }
+        
+        let flechasTemp = [...this.state.flechas]; // hacemos una copia separada del array del estado
+        flechasTemp.pop()
+        this.setState({flechas: flechasTemp});
     }
     
    
@@ -457,6 +474,14 @@ class Constelacion extends React.Component {
                         onClick={() => this.eliminarSeleccion() }>
                         <div className="px-3">
                         <p className="text-white">Elimina seleccion</p>
+                        </div>
+                    </button>
+
+                    <button
+                        className="flex rounded-full items-center py-3 px-3 bg-gradient focus:outline-none shadow-lg"
+                        onClick={() => this.eliminarUltimaFlecha(true) }>
+                        <div className="px-3">
+                        <p className="text-white">Elimina Flecha</p>
                         </div>
                     </button>
 
